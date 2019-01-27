@@ -74,7 +74,7 @@ public class puzzle {
 
 
 
-		System.out.println("Please select a strategy :\n1:BFS\n2:DFS\n3: Uniform Cost Search\n4:A*2 Misplaced Tile\n5.A*3 Manhattan");
+		System.out.println("Please select a strategy :\n1:BFS\n2:DFS\n3:Iterative Deepening\n4:BestFirst search\n5: Uniform Cost Search\n6:A*2 Misplaced Tile\n7.A*3 Manhattan");
 		String heur = scanner.nextLine();
 
 		switch (Integer.parseInt(heur)){
@@ -88,23 +88,35 @@ public class puzzle {
 
 			case 2:
 
-				strategies.DFS(rootNode);
+				strategies.DFS(rootNode,false);
 
 				break;
+            case 3:
 
-			case 3:
+                strategies.DFS(rootNode,true);
+
+                break;
+
+            case 4:
+
+                selectedHeuristics =  Heuriatics.HeurType.BestFirst ;
+                strategies.costSearch(rootNode,selectedHeuristics);
+                break;
+
+
+			case 5:
 
 				selectedHeuristics =  Heuriatics.HeurType.UniformCost ;
 				strategies.costSearch(rootNode,selectedHeuristics);
 				break;
 
-			case 4:
+			case 6:
 
 				selectedHeuristics =  Heuriatics.HeurType.TileCounter ;
 				strategies.costSearch(rootNode,selectedHeuristics);
 				break;
 
-			case 5:
+			case 7:
 
 				selectedHeuristics =  Heuriatics.HeurType.Manhathan ;
 				strategies.costSearch(rootNode,selectedHeuristics);
@@ -153,7 +165,7 @@ public class puzzle {
 class Node {
 	
 	/**
-	 * childList : list of the current state nodes
+	 * successors : list of the current state nodes
 	 * parentState : parent node in the diagram
 	 * tileList : one dimensional array to store a list of puzzle tile for current list
 	 * empty_tile : current empty index (location) 
@@ -162,7 +174,7 @@ class Node {
 	 */
 	
 
-	public ArrayList<Node> childList = new ArrayList<Node>();
+	public ArrayList<Node> successors = new ArrayList<Node>();
 	public Node parentState;
 	public int[] tileList = new int[puzzle.tilesNumber];
 	public int emptyTile = 0;
@@ -253,23 +265,24 @@ class Node {
 			current_state[newIndex] = current_state[i];
 			current_state[i] = temp_val;
 			
-			Node child = new Node(current_state);
-			child.depth = depth +1;
-			child.direction = nodeDirection ;
+			Node successor = new Node(current_state);
+			successor.depth = depth +1;
+			successor.direction = nodeDirection ;
 
 			int cost  =  tileList[newIndex]; // the cost is the tile value
-			child.cost = cost;
+			successor.cost = cost;
+
 			if(parentState == null){
-				child.totalCost = cost;
+				successor.totalCost = cost;
 			}else {
-				child.totalCost = cost + parentState.totalCost;
+				successor.totalCost = cost + parentState.totalCost;
 			}
 
-			child.expanded = true;
+			successor.expanded = true;
 
 
-			childList.add(child);
-			child.parentState = this;
+			successors.add(successor);
+			successor.parentState = this;
 		}
 		
 		

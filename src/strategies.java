@@ -29,11 +29,11 @@ public class strategies {
 				node.setVisited(true);
 				currentNode.expand();
 
-				for (Node child : currentNode.childList) {
+				for (Node successor : currentNode.successors) {
 
-					if (child.isVisited()) continue;
-						child.setVisited(true);
-					((LinkedList<Node>) queue).add(child);
+					if (successor.isVisited()) continue;
+						successor.setVisited(true);
+					((LinkedList<Node>) queue).add(successor);
 
 				}
 
@@ -51,46 +51,88 @@ public class strategies {
 
 	/**
 	 * Depth First Search implementation
-	 * @param root node
+	 * @param root Node
+	 * @param iterative Deepening solution
 	 */
-	public static void DFS(Node root) {
+	public static void DFS(Node root, boolean iterative) {
 
 
-		Stack<Node> stack = new Stack<Node>();
+
+
 		Node currentNode = root;
-		stack.push(currentNode);
-		int iterations = 0;
 
-		while ( !stack.isEmpty() &&  !currentNode.isGoalNode(puzzle.goal))  {
+        int iterations = 0;
+        int currentDepth = 1;
+		boolean found = false;
+        while(!found) {
 
-				Node node = stack.peek();
-				node.setVisited(true);
-				node.expand();
+			Set<String> visited = new HashSet<String>();
+			Stack<Node> stack = new Stack<Node>();
+			stack.push(currentNode);
+			visited.add(currentNode.toString());
 
-				for (Node child : node.childList) {
 
-					if (child.isVisited()) continue;
 
-					child.setVisited(true);
-					stack.push(child);
+            while (!stack.empty() ) {
 
-				}
 
-				currentNode = stack.pop();
-				iterations += 1;
+                Node node = stack.peek();
 
-		}
+                node.expand();
+                int unvisited = 0;
 
+
+
+                        for (Node successor : node.successors) {
+
+                            if (visited.contains(successor.toString())) {
+								continue;
+							}
+                            if(!iterative || successor.depth <= currentDepth) {
+								successor.cost = 0;
+								successor.totalCost = 0;
+								successor.depth = node.depth + 1;
+								visited.add(successor.toString());
+								stack.push(successor);
+								unvisited++;
+							}
+
+
+                        }
+
+						// We remove from stack when there are no unvisited nodes along the path anymore
+						if (unvisited == 0) {
+
+							currentNode = stack.pop();
+							found = currentNode.isGoalNode(puzzle.goal);
+							if(found){
+								break;
+							}
+
+						}
+
+
+                		iterations += 1;
+
+
+
+
+            }
+
+			currentDepth++;
+
+
+        }
 
 		PrintResults(currentNode,iterations,"DFS");
-		
+
 
 	}
 
 
 	/**
 	 * Cost function strategy.
-	 * This will be used for Uniform,A* algorithms
+	 * This will be used for BestFirst, Uniform,A* solutions
 	 * @param root Node
 	 * @param heurType Heuristics type
 	 */
@@ -105,21 +147,29 @@ public class strategies {
 
 			currentNode.setVisited(true);
 			currentNode.expand();
-			for (Node child : currentNode.childList) {
-				if (child.isVisited())
+			for (Node successor : currentNode.successors) {
+				if (successor.isVisited())
 					continue;
-				child.setVisited(true);
+				successor.setVisited(true);
 
 				//Append heuristics cost to node
 
-				child.heuristicCost = new Heuriatics(child,puzzle.goal, heurType).getCost();
-				child.totalCost += child.heuristicCost;
-				minHeap.add(child);
+				successor.heuristicCost = new Heuriatics(successor,puzzle.goal, heurType).getCost();
 
+				if(heurType == Heuriatics.HeurType.BestFirst) {
+					successor.cost = 0;
+					successor.totalCost = successor.heuristicCost;
+
+				}else{
+
+					successor.totalCost += successor.heuristicCost;
+
+				}
+
+				minHeap.add(successor);
 			}
 
 			currentNode = (Node) minHeap.poll();
-			currentNode.parentState.selectedChild = currentNode;
 			time += 1;
 		}
 
@@ -128,24 +178,7 @@ public class strategies {
 	}
 
 
-	/**
-	 * DFS wrapper for iterative deepening
-	 * @param root
-	 * @param max_depth
-	 */
-	public static  void iterativeDeepening(Node root, int max_depth){
 
-
-		for (int i = 1; i < max_depth; i++) {
-
-
-
-
-		}
-
-
-
-	}
 
 
 
@@ -171,17 +204,18 @@ public class strategies {
 	 */
 	public static Node reverseNode(Node root) {
 
-		if (root == null ||
-				root.parentState == null) {
-			return root;
-		}
-
-		Node reversedNode = reverseNode(root.parentState);
-
-		root.parentState.parentState = root;
-		root.parentState = null;
-		return reversedNode;
-	}
+        Node prev = null;
+        Node current = root;
+        Node next = null;
+        while (current != null) {
+            next = current.parentState;
+            current.parentState = prev;
+            prev = current;
+            current = next;
+        }
+        root = prev;
+        return root;
+    }
 
 
 	/**
@@ -193,13 +227,11 @@ public class strategies {
 	public static void PrintResults(Node node, int iterations, String strategy){
 
 		Node node_ = reverseNode(node);
-		System.out.println("Overall statics for " +  strategy);
-		System.out.println("Iterations : " + iterations);
 
+		int depth =0;
+		while(node_ !=null){
 
-		while(node_.parentState !=null){
-
-			System.out.println("Direction :" + node_.direction  + " move ,  node cost :" + node_.cost + ", total cost: " + node_.totalCost +", heuristic estimation : " + node_.heuristicCost   );
+			System.out.println("Direction :" + node_.direction  + " move , node depth : "+ depth++ +", node cost :" + node_.cost + ", total cost: " + node_.totalCost +", heuristic estimation : " + node_.heuristicCost   );
 			node_.printTiles();
 
 
@@ -207,7 +239,8 @@ public class strategies {
 
 		}
 
-
+		System.out.println("Overall statics for " +  strategy);
+		System.out.println("Iterations : " + iterations);
 
 
 

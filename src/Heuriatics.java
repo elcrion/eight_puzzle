@@ -35,6 +35,12 @@ public class Heuriatics {
 
                 break;
 
+            case BestFirst:
+
+                Cost =    manhathanDistance();
+
+                break;
+
             default: Cost = 0;
 
 
