@@ -18,34 +18,46 @@ public class strategies {
 	 */
 	public static void BFS(Node root) {
 
-
+		Set<String> visited = new HashSet<String>();
 		Queue<Node> queue = new LinkedList<Node>();
 		Node node = new Node(root.tileList);
 		Node currentNode = node;
 		int iterations = 0;
+		long startTime = System.currentTimeMillis();
+		int maxQueueSize = 0;
+		int nodesDequeued = 0;
 
 		while ( !currentNode.isGoalNode(puzzle.goal)) {
 			{
-				node.setVisited(true);
+				visited.add(node.toString());
 				currentNode.expand();
 
 				for (Node successor : currentNode.successors) {
 
-					if (successor.isVisited()) continue;
-						successor.setVisited(true);
+					if (visited.contains(successor.toString())){ continue;}
+					visited.add(successor.toString());
 					((LinkedList<Node>) queue).add(successor);
 
 				}
 
+				//Get maximum queue size
+				if(queue.size() > maxQueueSize){
+					maxQueueSize = queue.size();
+				}
+
+
 				currentNode = queue.poll();
 				iterations += 1;
+				nodesDequeued +=1;
 			}
 
 
 		}
 
+		long stopTime = System.currentTimeMillis();
+		long elapsedTime = stopTime - startTime;
 
-		PrintResults(currentNode,iterations,"BFS");
+		PrintResults(currentNode,iterations,"BFS",elapsedTime,maxQueueSize,nodesDequeued);
 	}
 
 
@@ -60,10 +72,13 @@ public class strategies {
 
 
 		Node currentNode = root;
-
+		int maxQueueSize = 0;
         int iterations = 0;
         int currentDepth = 1;
 		boolean found = false;
+		int nodesDequeued = 0;
+		long startTime = System.currentTimeMillis();
+
         while(!found) {
 
 			Set<String> visited = new HashSet<String>();
@@ -100,11 +115,19 @@ public class strategies {
 
                         }
 
+						//Get maximum stack size
+						if(stack.size() > maxQueueSize){
+							maxQueueSize = stack.size();
+						}
+
+
 						// We remove from stack when there are no unvisited nodes along the path anymore
 						if (unvisited == 0) {
 
 							currentNode = stack.pop();
+							nodesDequeued +=1;
 							found = currentNode.isGoalNode(puzzle.goal);
+
 							if(found){
 								break;
 							}
@@ -124,7 +147,9 @@ public class strategies {
 
         }
 
-		PrintResults(currentNode,iterations,"DFS");
+		long stopTime = System.currentTimeMillis();
+		long elapsedTime = stopTime - startTime;
+		PrintResults(currentNode,iterations,"DFS",elapsedTime,maxQueueSize,nodesDequeued);
 
 
 	}
@@ -140,17 +165,20 @@ public class strategies {
 
 
 		int time = 0;
-
+		Set<String> visited = new HashSet<String>();
 		PriorityQueue minHeap =new PriorityQueue(10, new NodeComparator());
 		Node currentNode = root;
+		long startTime = System.currentTimeMillis();
+		int maxQueueSize = 0;
+		int nodesDequeued = 0;
+
 		while ( !currentNode.isGoalNode(puzzle.goal))  {
 
-			currentNode.setVisited(true);
+			visited.add(currentNode.toString());
 			currentNode.expand();
 			for (Node successor : currentNode.successors) {
-				if (successor.isVisited())
-					continue;
-				successor.setVisited(true);
+				if (visited.contains(successor.toString())) {continue;}
+				visited.add(successor.toString());
 
 				//Append heuristics cost to node
 
@@ -167,13 +195,22 @@ public class strategies {
 				}
 
 				minHeap.add(successor);
+
+				//Get maximum PQ size
+				if(minHeap.size() > maxQueueSize){
+					maxQueueSize = minHeap.size();
+				}
+
 			}
 
 			currentNode = (Node) minHeap.poll();
+			nodesDequeued +=1;
 			time += 1;
 		}
 
-		PrintResults(currentNode,time,"costSearch");
+		long stopTime = System.currentTimeMillis();
+		long elapsedTime = stopTime - startTime;
+		PrintResults(currentNode,time,"costSearch",elapsedTime,maxQueueSize,nodesDequeued);
 
 	}
 
@@ -219,19 +256,25 @@ public class strategies {
 
 
 	/**
+	 *
 	 * Print stats for selected statistics
 	 * @param node returned current Node
 	 * @param iterations number of iterations
 	 * @param strategy selected strategy name
+	 * @param timeMS time in millis
+	 * @param maxQueueSize Space : size of queue of its max
+	 * @param nodesDequeued Time : Number of nodes popped off the queue
 	 */
-	public static void PrintResults(Node node, int iterations, String strategy){
+	public static void PrintResults(Node node, int iterations, String strategy,long timeMS,int maxQueueSize,int nodesDequeued){
 
 		Node node_ = reverseNode(node);
 
 		int depth =0;
+
 		while(node_ !=null){
 
-			System.out.println("Direction :" + node_.direction  + " move , node depth : "+ depth++ +", node cost :" + node_.cost + ", total cost: " + node_.totalCost +", heuristic estimation : " + node_.heuristicCost   );
+			depth++ ;
+			System.out.println("Direction :" + node_.direction  + " move , node depth : "+ depth +", node cost :" + node_.cost + ", total cost: " + node_.totalCost +", heuristic estimation : " + node_.heuristicCost   );
 			node_.printTiles();
 
 
@@ -241,8 +284,11 @@ public class strategies {
 
 		System.out.println("Overall statics for " +  strategy);
 		System.out.println("Iterations : " + iterations);
-
-
+		System.out.println("Time taken in ms : " + timeMS);
+		System.out.println("Length  : " + node.depth);
+		System.out.println("Cost  : " + node.totalCost);
+		System.out.println("Time   : " + nodesDequeued);
+		System.out.println("Space  : " + maxQueueSize);
 
 	}
 

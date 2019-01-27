@@ -23,7 +23,7 @@ public class puzzle {
 	private static int[] easyPuzzle = {1,3,4,8,6,2,7,0,5};
 	private static int[] mediumPuzzle = {2,8,1,0,4,3,7,6,5};
 	private static int[] hardPuzzle = {5,6,7,4,0,8,3,2,1};
-
+	private static  Scanner scanner = new Scanner(System.in);
 
 
 
@@ -49,38 +49,24 @@ public class puzzle {
 
 	public static void main(String[] args) {
 
-		Scanner scanner = new Scanner(System.in);
-		System.out.println("Select mode :  \n 1: Easy \n 2: Medium \n 3: Hard  ");
-		int mode = Integer.parseInt(scanner.nextLine());
-		System.out.println("selected mode : " + mode );
 
-		switch (mode){
+	while(true) {
+		readMode();
+		setStrategy();
+		System.out.println("\n\n0: select another method\n1: stop.");
+		if(scanner.nextLine().equals("1")){
 
-			case 1 :
-
-				rootNode = new Node(easyPuzzle);
-				break;
-			case 2 :
-
-				rootNode = new Node(mediumPuzzle);
-				break;
-
-			case 3 :
-
-				rootNode = new Node(hardPuzzle);
-				break;
-
+			break;
 		}
 
 
-		goal = new Node(goalPuzzle);
+	}
 
 
+	}
 
-
-
-
-		System.out.println("Please select a strategy :\n1:BFS\n2:DFS\n3:Iterative Deepening\n4:BestFirst search\n5: Uniform Cost Search\n6:A* Misplaced Tile\n7.A* Manhattan\n8.A* Combined");
+	private static void setStrategy() {
+		System.out.println("Please select a strategy :\n1:BFS\n2:DFS\n3:Iterative Deepening\n4:BestFirst search\n5:Uniform Cost Search\n6:A*1 Misplaced Tile\n7.A*2 Manhattan\n8.A*3 Combined");
 		String heur = scanner.nextLine();
 
 		switch (Integer.parseInt(heur)){
@@ -134,35 +120,47 @@ public class puzzle {
                 strategies.costSearch(rootNode,selectedHeuristics);
                 break;
 
+            default:
+
+				System.out.println("Can not recognize your input ");
+
+
+
+		}
+	}
+
+	private static void readMode() {
+		System.out.println("Select mode :  \n 1: Easy \n 2: Medium \n 3: Hard  ");
+		int mode = Integer.parseInt(scanner.nextLine());
+		System.out.println("selected mode : " + mode );
+
+		switch (mode){
+
+			case 1 :
+
+				rootNode = new Node(easyPuzzle);
+				break;
+			case 2 :
+
+				rootNode = new Node(mediumPuzzle);
+				break;
+
+			case 3 :
+
+				rootNode = new Node(hardPuzzle);
+				break;
+
+			default:
+
+				System.out.println("Can not recognize your input ");
+
+
+
 		}
 
 
-
-
-
-
-
-
-
-
+		goal = new Node(goalPuzzle);
 	}
-
-
-	/**
-	 *  Read input parameters into appropriate array
-	 * @param puzzle
-	 */
-	private static int[] readPuzzle( String puzzle) {
-		String[] tilesString = puzzle.split(" ");
-		int [] tilesArr = new int[tilesNumber];
-		for (int i = 0; i < tilesNumber; i++) {
-
-			tilesArr[i] = Integer.parseInt(tilesString[i]);
-		}
-
-		return tilesArr;
-	}
-
 
 
 }
