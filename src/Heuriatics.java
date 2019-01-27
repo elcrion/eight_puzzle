@@ -4,7 +4,7 @@
 public class Heuriatics {
 
 
-    public enum HeurType { BestFirst,UniformCost,Manhathan,TileCounter }
+    public enum HeurType { BestFirst,UniformCost, AstarManhattan, AstarTileCounter,AstarAdvanced}
 
     private Node node;
     private Node goal;
@@ -23,13 +23,13 @@ public class Heuriatics {
 
         switch (type){
 
-            case Manhathan:
+            case AstarManhattan:
 
-                Cost =    manhathanDistance();
+                Cost =    manhattanDistance();
 
                 break;
 
-            case TileCounter:
+            case AstarTileCounter:
 
                 Cost =    misplacedTileCounter();
 
@@ -37,7 +37,13 @@ public class Heuriatics {
 
             case BestFirst:
 
-                Cost =    manhathanDistance();
+                Cost =    manhattanDistance();
+
+                break;
+
+            case AstarAdvanced:
+
+                Cost =  advancedHeuristics();
 
                 break;
 
@@ -73,10 +79,10 @@ public class Heuriatics {
 
 
     /**
-     * Calculate Manhathan distance for tiles
+     * Calculate AstarManhattan distance for tiles
      * @return distance
      */
-    public int manhathanDistance(){
+    public int manhattanDistance(){
 
         int distance = 0;
 
@@ -89,6 +95,25 @@ public class Heuriatics {
 
         return  distance ;
     }
+
+
+    /**
+     * Combination of Manhattan distance and number of tiles needed to be moved to reach the goal
+     * @return distance
+     */
+    public  int advancedHeuristics(){
+
+        int distance = 0;
+        int mDistance = manhattanDistance();
+
+        distance = distance + 2 * mDistance - 1;
+
+
+        return distance;
+
+    }
+
+
 
 
 }

@@ -3,8 +3,7 @@ import java.util.Scanner;
 
 /**
  * 
- * Main class for the Puzzle implementation 
- * 
+ * Main class for the Puzzle implementation
  * @author glebiakovlev
  *
  */
@@ -31,10 +30,17 @@ public class puzzle {
 
 	/**
 	 * TO RUN SET PARAMETERS :
-	 * current state as list of tilesitems
-	 * goal state as list of tiles
-	 * algorythm to use : BFS,DFS , A*
-	 * heuristic function : manhattan , other
+	 * mode : Easy, Medium, Hard
+	 * strategy :
+     * 1:BFS
+     * 2:DFS
+     * 3:Iterative Deepening
+     * 4:BestFirst search
+     * 5: Uniform Cost Search
+     * 6:A* Misplaced Tile
+     * 7.A* Manhattan
+	 * 8.A* Advanced heuristics
+	 *
 	 *
 	 * @param args
 	 */
@@ -74,7 +80,7 @@ public class puzzle {
 
 
 
-		System.out.println("Please select a strategy :\n1:BFS\n2:DFS\n3:Iterative Deepening\n4:BestFirst search\n5: Uniform Cost Search\n6:A*2 Misplaced Tile\n7.A*3 Manhattan");
+		System.out.println("Please select a strategy :\n1:BFS\n2:DFS\n3:Iterative Deepening\n4:BestFirst search\n5: Uniform Cost Search\n6:A* Misplaced Tile\n7.A* Manhattan\n8.A* Advanced");
 		String heur = scanner.nextLine();
 
 		switch (Integer.parseInt(heur)){
@@ -112,16 +118,21 @@ public class puzzle {
 
 			case 6:
 
-				selectedHeuristics =  Heuriatics.HeurType.TileCounter ;
+				selectedHeuristics =  Heuriatics.HeurType.AstarTileCounter;
 				strategies.costSearch(rootNode,selectedHeuristics);
 				break;
 
 			case 7:
 
-				selectedHeuristics =  Heuriatics.HeurType.Manhathan ;
+				selectedHeuristics =  Heuriatics.HeurType.AstarManhattan;
 				strategies.costSearch(rootNode,selectedHeuristics);
-				break;
 
+				break;
+            case 8:
+
+                selectedHeuristics =  Heuriatics.HeurType.AstarAdvanced;
+                strategies.costSearch(rootNode,selectedHeuristics);
+                break;
 
 		}
 
@@ -169,8 +180,12 @@ class Node {
 	 * parentState : parent node in the diagram
 	 * tileList : one dimensional array to store a list of puzzle tile for current list
 	 * empty_tile : current empty index (location) 
-	 * 
-	 *
+	 * cost : cost of the node
+	 * totalCost : combined total cost of the path so far
+     * heuristicCost : estimation of heuristics for the node
+     * depth : depth of the node
+     * isVisited : indicator if node is visited
+     * direction : what direction was chosen to to move
 	 */
 	
 
@@ -180,12 +195,10 @@ class Node {
 	public int emptyTile = 0;
 	public enum Direction { Left , Right, Up, Down}
 	public int cost;
-	public Node selectedChild;
 	public int heuristicCost;
 	public int totalCost;
 	public int depth = 0;
 	private  boolean isVisited;
-	public  boolean expanded = false;
 	public  String direction ;
 
 
@@ -217,6 +230,7 @@ class Node {
 	 * Make possible move to specified direction
 	 * The method will check for the puzzle boundaries within array
 	 * For now assume the puzzle is quadratic
+     * The cost of the move is the value of the tile moved
 	 * @param direction :  Left , Right, Up, Down
 	 * @param state : tiles array (current board state)
 	 * @param i : index of the empty tile
@@ -277,9 +291,6 @@ class Node {
 			}else {
 				successor.totalCost = cost + parentState.totalCost;
 			}
-
-			successor.expanded = true;
-
 
 			successors.add(successor);
 			successor.parentState = this;
