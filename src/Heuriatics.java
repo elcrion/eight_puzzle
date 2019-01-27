@@ -4,7 +4,7 @@
 public class Heuriatics {
 
 
-    public enum HeurType { BestFirst,UniformCost, AstarManhattan, AstarTileCounter,AstarAdvanced}
+    public enum HeurType { BestFirst,UniformCost, AstarManhattan, AstarTileCounter, AstarCombined}
 
     private Node node;
     private Node goal;
@@ -41,9 +41,9 @@ public class Heuriatics {
 
                 break;
 
-            case AstarAdvanced:
+            case AstarCombined:
 
-                Cost =  advancedHeuristics();
+                Cost =  combinedHeuristics();
 
                 break;
 
@@ -61,7 +61,8 @@ public class Heuriatics {
     }
 
     /**
-     * Count number of misplaced titles for Heuristics
+     * Hamming Distance
+     * Count number of misplaced titles between Goal and current Node for Heuristics
      * @return number of misplaced tiles
      */
     public int misplacedTileCounter(){
@@ -80,6 +81,7 @@ public class Heuriatics {
 
     /**
      * Calculate AstarManhattan distance for tiles
+     * Check for the Manhattan distance between current state abd the goal state
      * @return distance
      */
     public int manhattanDistance(){
@@ -98,18 +100,18 @@ public class Heuriatics {
 
 
     /**
-     * Combination of Manhattan distance and number of tiles needed to be moved to reach the goal
+     * Combination of Manhattan distance and number of tiles along the path needed to be moved to reach the goal
+     * This should have higher value than manhattan distance hence more Dominant Heuristics
      * @return distance
      */
-    public  int advancedHeuristics(){
+    public  int combinedHeuristics(){
 
-        int distance = 0;
+        int distance = misplacedTileCounter();
         int mDistance = manhattanDistance();
 
-        distance = distance + 2 * mDistance - 1;
 
 
-        return distance;
+        return distance + mDistance;
 
     }
 

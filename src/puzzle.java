@@ -80,7 +80,7 @@ public class puzzle {
 
 
 
-		System.out.println("Please select a strategy :\n1:BFS\n2:DFS\n3:Iterative Deepening\n4:BestFirst search\n5: Uniform Cost Search\n6:A* Misplaced Tile\n7.A* Manhattan\n8.A* Advanced");
+		System.out.println("Please select a strategy :\n1:BFS\n2:DFS\n3:Iterative Deepening\n4:BestFirst search\n5: Uniform Cost Search\n6:A* Misplaced Tile\n7.A* Manhattan\n8.A* Combined");
 		String heur = scanner.nextLine();
 
 		switch (Integer.parseInt(heur)){
@@ -130,7 +130,7 @@ public class puzzle {
 				break;
             case 8:
 
-                selectedHeuristics =  Heuriatics.HeurType.AstarAdvanced;
+                selectedHeuristics =  Heuriatics.HeurType.AstarCombined;
                 strategies.costSearch(rootNode,selectedHeuristics);
                 break;
 
