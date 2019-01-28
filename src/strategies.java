@@ -285,10 +285,10 @@ public class strategies {
 		System.out.println("Overall statics for " +  strategy);
 		System.out.println("Iterations : " + iterations);
 		System.out.println("Time taken in ms : " + timeMS);
-		System.out.println("Length  : " + node.depth);
-		System.out.println("Cost  : " + node.totalCost);
-		System.out.println("Time   : " + nodesDequeued);
-		System.out.println("Space  : " + maxQueueSize);
+		System.out.println("Length : " + node.depth);
+		System.out.println("Cost : " + node.totalCost);
+		System.out.println("Time : " + nodesDequeued);
+		System.out.println("Space : " + maxQueueSize);
 
 	}
 
