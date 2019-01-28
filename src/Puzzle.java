@@ -9,7 +9,7 @@ import java.util.Scanner;
  */
 
 
-public class puzzle {
+public class Puzzle {
 
 
 	public static Node goal;
@@ -74,50 +74,50 @@ public class puzzle {
 
 			case 1:
 
-				strategies.BFS(rootNode);
+				Strategies.BFS(rootNode);
 
 				break;
 
 			case 2:
 
-				strategies.DFS(rootNode,false);
+				Strategies.DFS(rootNode,false);
 
 				break;
             case 3:
 
-                strategies.DFS(rootNode,true);
+                Strategies.DFS(rootNode,true);
 
                 break;
 
             case 4:
 
                 selectedHeuristics =  Heuriatics.HeurType.BestFirst ;
-                strategies.costSearch(rootNode,selectedHeuristics);
+                Strategies.costSearch(rootNode,selectedHeuristics);
                 break;
 
 
 			case 5:
 
 				selectedHeuristics =  Heuriatics.HeurType.UniformCost ;
-				strategies.costSearch(rootNode,selectedHeuristics);
+				Strategies.costSearch(rootNode,selectedHeuristics);
 				break;
 
 			case 6:
 
 				selectedHeuristics =  Heuriatics.HeurType.AstarTileCounter;
-				strategies.costSearch(rootNode,selectedHeuristics);
+				Strategies.costSearch(rootNode,selectedHeuristics);
 				break;
 
 			case 7:
 
 				selectedHeuristics =  Heuriatics.HeurType.AstarManhattan;
-				strategies.costSearch(rootNode,selectedHeuristics);
+				Strategies.costSearch(rootNode,selectedHeuristics);
 
 				break;
             case 8:
 
                 selectedHeuristics =  Heuriatics.HeurType.AstarCombined;
-                strategies.costSearch(rootNode,selectedHeuristics);
+                Strategies.costSearch(rootNode,selectedHeuristics);
                 break;
 
             default:
@@ -167,47 +167,36 @@ public class puzzle {
 
 
 /**
- * Node class for the puzzle
+ * Node class for the Puzzle
  * This represents a node in the search state diagram 
  * 
  */
 class Node {
 	
 	/**
-	 * successors : list of the current state nodes
+	 * successors : list of the possible state nodes
 	 * parentState : parent node in the diagram
-	 * tileList : one dimensional array to store a list of puzzle tile for current list
+	 * tileList : one dimensional array to store a list of Puzzle tile for current list
 	 * empty_tile : current empty index (location) 
 	 * cost : cost of the node
 	 * totalCost : combined total cost of the path so far
      * heuristicCost : estimation of heuristics for the node
      * depth : depth of the node
-     * isVisited : indicator if node is visited
      * direction : what direction was chosen to to move
 	 */
 	
 
 	public ArrayList<Node> successors = new ArrayList<Node>();
 	public Node parentState;
-	public int[] tileList = new int[puzzle.tilesNumber];
+	public int[] tileList = new int[Puzzle.tilesNumber];
 	public int emptyTile = 0;
 	public enum Direction { Left , Right, Up, Down}
 	public int cost;
 	public int heuristicCost;
 	public int totalCost;
 	public int depth = 0;
-	private  boolean isVisited;
 	public  String direction ;
 
-
-
-	public boolean isVisited() {
-		return isVisited;
-	}
-
-	public void setVisited(boolean visited) {
-		isVisited = visited;
-	}
 
 
 
@@ -226,8 +215,8 @@ class Node {
 	
 	/**
 	 * Make possible move to specified direction
-	 * The method will check for the puzzle boundaries within array
-	 * For now assume the puzzle is quadratic
+	 * The method will check for the Puzzle boundaries within array
+	 * For now assume the Puzzle is quadratic
      * The cost of the move is the value of the tile moved
 	 * @param direction :  Left , Right, Up, Down
 	 * @param state : tiles array (current board state)
@@ -240,7 +229,7 @@ class Node {
 		
 		int newIndex = 0;
 		boolean constraint_check  = false;
-		int columns = (int) Math.sqrt(puzzle.tilesNumber);
+		int columns = (int) Math.sqrt(Puzzle.tilesNumber);
 		String nodeDirection = null;
 		
 		switch (direction) {
@@ -283,12 +272,6 @@ class Node {
 
 			int cost  =  tileList[newIndex]; // the cost is the tile value
 			successor.cost = cost;
-
-			if(parentState == null){
-				successor.totalCost = cost;
-			}else {
-				successor.totalCost = cost + parentState.totalCost;
-			}
 
 			successors.add(successor);
 			successor.parentState = this;
@@ -368,7 +351,7 @@ class Node {
 
 	public void printTiles(){
 
-		int columns = (int) Math.sqrt(puzzle.tilesNumber);
+		int columns = (int) Math.sqrt(Puzzle.tilesNumber);
 		int line = 0;
 		if(tileList.length > 0){
 

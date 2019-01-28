@@ -82,7 +82,7 @@ public class Heuriatics {
     /**
      * Calculate AstarManhattan distance for tiles
      * Check for the Manhattan distance between current state abd the goal state
-     * @return distance
+     * @return distance estimation
      */
     public int manhattanDistance(){
 
@@ -92,7 +92,7 @@ public class Heuriatics {
         for (int i = 0; i < this.node.tileList.length; i += 1)
             for (int j = 0; j < goal.tileList.length; j += 1)
                 if (this.node.tileList[i] == goal.tileList[j])
-                    distance = distance + ((Math.abs(i % puzzle.tilesNumber - j % puzzle.tilesNumber)) + Math.abs(i / puzzle.tilesNumber + j / puzzle.tilesNumber));
+                    distance = distance + ((Math.abs(i % Puzzle.tilesNumber - j % Puzzle.tilesNumber)) + Math.abs(i / Puzzle.tilesNumber + j / Puzzle.tilesNumber));
 
 
         return  distance ;
@@ -107,7 +107,7 @@ public class Heuriatics {
      * where  mDistance is the current manhattan distance
      * and mDistance-1 is the number of tiles to be moved from current position
      * This should have higher value than manhattan distance hence more Dominant Heuristics
-     * @return distance
+     * @return distance estimation
      */
     public  int combinedHeuristics(){
 
@@ -117,7 +117,7 @@ public class Heuriatics {
         for (int i = 0; i < this.node.tileList.length; i += 1)
             for (int j = 0; j < goal.tileList.length; j += 1)
                 if (this.node.tileList[i] == goal.tileList[j])
-                    mDistance =  ((Math.abs(i % puzzle.tilesNumber - j % puzzle.tilesNumber)) + Math.abs(i / puzzle.tilesNumber + j / puzzle.tilesNumber));
+                    mDistance =  ((Math.abs(i % Puzzle.tilesNumber - j % Puzzle.tilesNumber)) + Math.abs(i / Puzzle.tilesNumber + j / Puzzle.tilesNumber));
         distance = distance + 2 * mDistance - 1;
 
         return distance;

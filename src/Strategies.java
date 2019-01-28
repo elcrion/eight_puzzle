@@ -1,11 +1,11 @@
 import java.util.*;
 
 /**
- * Class for possible search strategies 
+ * Class for possible search Strategies
  * @author glebiakovlev
  *
  */
-public class strategies {
+public class Strategies {
 
 
 
@@ -27,7 +27,7 @@ public class strategies {
 		int maxQueueSize = 0;
 		int nodesDequeued = 0;
 
-		while ( !currentNode.isGoalNode(puzzle.goal)) {
+		while ( !currentNode.isGoalNode(Puzzle.goal)) {
 			{
 				visited.add(node.toString());
 				currentNode.expand();
@@ -36,6 +36,8 @@ public class strategies {
 
 					if (visited.contains(successor.toString())){ continue;}
 					visited.add(successor.toString());
+					successor.cost = 0;
+					successor.totalCost = 0;
 					((LinkedList<Node>) queue).add(successor);
 
 				}
@@ -126,7 +128,7 @@ public class strategies {
 
 							currentNode = stack.pop();
 							nodesDequeued +=1;
-							found = currentNode.isGoalNode(puzzle.goal);
+							found = currentNode.isGoalNode(Puzzle.goal);
 
 							if(found){
 								break;
@@ -172,7 +174,7 @@ public class strategies {
 		int maxQueueSize = 0;
 		int nodesDequeued = 0;
 
-		while ( !currentNode.isGoalNode(puzzle.goal))  {
+		while ( !currentNode.isGoalNode(Puzzle.goal))  {
 
 			visited.add(currentNode.toString());
 			currentNode.expand();
@@ -182,7 +184,7 @@ public class strategies {
 
 				//Append heuristics cost to node
 
-				successor.heuristicCost = new Heuriatics(successor,puzzle.goal, heurType).getCost();
+				successor.heuristicCost = new Heuriatics(successor, Puzzle.goal, heurType).getCost();
 
 				if(heurType == Heuriatics.HeurType.BestFirst) {
 					successor.cost = 0;
@@ -190,7 +192,7 @@ public class strategies {
 
 				}else{
 
-					successor.totalCost += successor.heuristicCost;
+					successor.totalCost = successor.cost + currentNode.totalCost + successor.heuristicCost;
 
 				}
 
@@ -268,7 +270,6 @@ public class strategies {
 	public static void PrintResults(Node node, int iterations, String strategy,long timeMS,int maxQueueSize,int nodesDequeued){
 
 		Node node_ = reverseNode(node);
-
 		int depth =0;
 
 		while(node_ !=null){
@@ -276,7 +277,6 @@ public class strategies {
 			depth++ ;
 			System.out.println("Direction :" + node_.direction  + " move , node depth : "+ depth +", node cost :" + node_.cost + ", total cost: " + node_.totalCost +", heuristic estimation : " + node_.heuristicCost   );
 			node_.printTiles();
-
 
 			node_ = node_.parentState;
 
